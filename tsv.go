@@ -91,8 +91,11 @@ func tabView(scanner *bufio.Scanner, delim string, maxPreviewLines int, maxColWi
 					}
 					colWidths = append(colWidths, colWidth)
 					colTypes = append(colTypes, "str")
-				} else if len(entry) > colWidths[colIdx] && len(entry) < maxColWidth {
+				} else if len(entry) > colWidths[colIdx] {
 					colWidths[colIdx] = len(entry)
+					if colWidths[colIdx] > maxColWidth {
+						colWidths[colIdx] = maxColWidth
+					}
 				}
 				if _, err := strconv.Atoi(entry); err == nil {
 					colTypes[colIdx] = "int"
@@ -139,6 +142,8 @@ func writeCols(line string, colWidths []int, colTypes []string, delim string) {
 			entryInt, err := strconv.Atoi(entry)
 			if err == nil {
 				entry = fmt.Sprintf("%*d", colWidths[colIdx], entryInt)
+			} else {
+				entry = fmt.Sprintf("%*s", colWidths[colIdx], entry)
 			}
 		} else {
 			// text is right-justified
