@@ -1,0 +1,11 @@
+## Header
+#sample_a	relatedness	ibs0	ibs2
+NA12878	0.487	3954	some
+NA12878	0.497	4028	some random lines
+NA12878	-0.487	46	some random lines
+NA12878	-0.865	36	some
+NA12892	-0.651	21	
+NA12892	-0.519	45
+NA19238	0.000	1	
+NA19239	-nan	1	
+NA12891	-0.623	41	some random lines
