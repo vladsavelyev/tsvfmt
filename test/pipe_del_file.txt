@@ -1,0 +1,2 @@
+sample|af|end|ann
+NA12891 A|-0.623|41|some annotation
