@@ -39,7 +39,7 @@ jobs:
 
       - name: Test
         run: |
-          bash -e test/test.sh
+          bash -ex test/test.sh
           
       - name: Upload to anaconda
         if: "startsWith(github.ref, 'refs/tags/')"
