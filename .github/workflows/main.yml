@@ -27,8 +27,8 @@ jobs:
       # To share the artifact with other jobs
       - uses: actions/upload-artifact@master
         with:
-          name: binary
-          path: ./tsv
+          name: artefact
+          path: $PWD/tsv
 
   # Separate job because we don't want a release record for each os
   initialize_gh_release:
@@ -67,8 +67,8 @@ jobs:
     steps:
       - uses: actions/download-artifact@master
         with:
-          name: binary
-          path: ./tsv
+          name: artefact
+          path: $PWD/tsv
 
       - name: Upload release asset
         id: upload-release-asset
