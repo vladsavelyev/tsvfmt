@@ -49,8 +49,7 @@ jobs:
       - name: Create release
         id: create_gh_release
         uses: actions/create-release@v1
-        env:
-          # This token is provided by Actions, you do not need to create your own token
+        env:  # This token is provided by Actions, you don't need to create your own token
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: ${{ github.ref }}
@@ -79,7 +78,7 @@ jobs:
       - name: Upload release asset
         id: upload-release-asset
         uses: actions/upload-release-asset@v1
-        env:
+        env:  # This token is provided by Actions, you don't need to create your own token
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ needs.initialize_gh_release.outputs.upload_url }}
@@ -105,17 +104,19 @@ jobs:
       - uses: conda-incubator/setup-miniconda@v2
         with:
           activate-environment: buildenv
+          channels: vladsaveliev,conda-forge,defaults
+          channel-priority: true
+          mamba-version: "*"
 
       - name: Setup conda
-        run: |
-          conda config --add channels conda-forge --add channels vladsaveliev
-          conda install conda-build anaconda-client
+        shell: bash -l {0}
+        run: mamba install conda-build anaconda-client
 
       - name: Build conda package
-        run: conda build conda/$(basename $GITHUB_REPOSITORY)
+        run: mamba build conda/$(basename $GITHUB_REPOSITORY)
 
       - name: Install
-        run: conda install --use-local $(basename $GITHUB_REPOSITORY)
+        run: mamba install --use-local $(basename $GITHUB_REPOSITORY)
 
       - name: Test
         run: bash -ex test/test.sh
