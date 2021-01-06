@@ -103,6 +103,8 @@ jobs:
         run: echo "PATH=${HOME}/miniconda/bin:${PATH}" >> $GITHUB_ENV
 
       - uses: conda-incubator/setup-miniconda@v2
+        with:
+          activate-environment: buildenv
 
       - name: Setup conda
         run: |
