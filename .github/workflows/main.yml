@@ -106,6 +106,7 @@ jobs:
           channels: vladsaveliev,conda-forge,defaults
           channel-priority: true
           mamba-version: "*"
+          python-version: 3.8  # anaconda client is not working with py3.9
 
       - name: Setup build env
         run: mamba install conda-build anaconda-client
