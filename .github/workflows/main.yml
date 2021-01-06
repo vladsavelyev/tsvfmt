@@ -10,6 +10,11 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest]
+#        include:
+#          - os: ubuntu-latest
+#            executable_suffix: '_linux'
+#          - os: maxos-latest
+#            executable_suffix: '_macos'
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@master
@@ -21,14 +26,17 @@ jobs:
 
       - name: Install & test
         run: |
-          export PATH=$PWD:$PATH
+#          mkdir -p ${{ github.workspace }}/bin
+          export PATH=${{ github.workspace }}:$PATH
+#          mv tsv ${{ github.workspace }}/bin/tsv_${{ matrix.executable_suffix }}
           bash -ex test/test.sh
 
       # To share the artifact with other jobs
       - uses: actions/upload-artifact@master
         with:
-          name: artefact
-          path: $PWD/tsv
+          name: asset_${{ matrix.executable_suffix }}
+          path: ${{ github.workspace }}/tsv
+          if-no-files-found: error
 
   # Separate job because we don't want a release record for each os
   initialize_gh_release:
@@ -67,8 +75,8 @@ jobs:
     steps:
       - uses: actions/download-artifact@master
         with:
-          name: artefact
-          path: $PWD/tsv
+          name: asset_${{ matrix.executable_suffix }}
+          path: ~/tsv_${{ matrix.executable_suffix }}
 
       - name: Upload release asset
         id: upload-release-asset
@@ -77,7 +85,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ needs.initialize_gh_release.outputs.upload_url }}
-          asset_path: ./tsv
+          asset_path: ~/tsv_${{ matrix.executable_suffix }}
           asset_name: tsv_${{ matrix.executable_suffix }}
           asset_content_type: application/octet-stream
 
