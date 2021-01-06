@@ -1,6 +1,9 @@
 # tsvfmt
 
-Tab-separated file viewer for command line. Nicely aligns colums in the output.
+[![Anaconda-Server Badge](https://anaconda.org/vladsaveliev/tsvfmt/badges/installer/conda.svg)](https://conda.anaconda.org/vladsaveliev/tsvfmt)
+[![GitHub Actions Badge](https://github.com/vladsaveliev/tsvfmt/workflows/Release/badge.svg)](https://github.com/vladsaveliev/tsvfmt/actions)
+
+Tab-separated file viewer for command line. Nicely aligns columns in the output.
 
 
 ## Installation
@@ -11,7 +14,6 @@ If you are using go, you can build the binary from source with:
 
 ```
 go build tsv.go
-
 ```
 
 tsvfmt is also available on conda:
