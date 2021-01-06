@@ -90,6 +90,8 @@ jobs:
         os: [ubuntu-latest, macos-latest]
     runs-on: ${{ matrix.os }}
     steps:
+      - uses: actions/checkout@master
+
       - name: Add miniconda to PATH
         run: echo "PATH=${HOME}/miniconda/bin:${PATH}" >> $GITHUB_ENV
 
