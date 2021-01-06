@@ -10,6 +10,11 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest]
+        include:
+          - os: ubuntu-latest
+            executable_suffix: 'linux'
+          - os: macos-latest
+            executable_suffix: 'macos'
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@master
@@ -61,9 +66,9 @@ jobs:
         os: [ubuntu-latest, macos-latest]
         include:
           - os: ubuntu-latest
-            executable_suffix: '_linux'
+            executable_suffix: 'linux'
           - os: macos-latest
-            executable_suffix: '_macos'
+            executable_suffix: 'macos'
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/download-artifact@master
