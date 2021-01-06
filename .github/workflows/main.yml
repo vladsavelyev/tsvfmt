@@ -118,9 +118,9 @@ jobs:
         run: |
           mamba build conda/$(basename $GITHUB_REPOSITORY)
 
-      - name: Build package
+      # --use-local is not working
+      - name: Install package
         run: |
-          # --use-local is not working
           mamba install -c file://${CONDA_PREFIX}/conda-bld/ $(basename $GITHUB_REPOSITORY)
 
       - name: Test
@@ -129,4 +129,4 @@ jobs:
       - name: Upload to anaconda
         run: |
           anaconda -t ${{ secrets.ANACONDA_TOKEN }} \
-            upload ${HOME}/miniconda/conda-bld/**/*.tar.bz2
+            upload ${CONDA_PREFIX}/conda-bld/**/*.tar.bz2
