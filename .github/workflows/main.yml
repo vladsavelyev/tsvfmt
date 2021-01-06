@@ -38,9 +38,9 @@ jobs:
 
   # In a separate job w/o matrix because we don't want a release for each OS
   initialize_gh_release:
-    name: Initialize GitHub release
     # Only creating releases on tag pushes
     if: "startsWith(github.ref, 'refs/tags/')"
+    name: Initialize GitHub release
     needs: build_and_test
     runs-on: ubuntu-latest
     outputs:
@@ -56,8 +56,8 @@ jobs:
           release_name: Release ${{ github.ref }}
 
   upload_gh_assets:
-    name: Upload assets
     if: "startsWith(github.ref, 'refs/tags/')"
+    name: Upload assets
     needs: initialize_gh_release
     strategy:
       fail-fast: false
