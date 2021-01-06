@@ -95,6 +95,9 @@ jobs:
       matrix:
         os: [ubuntu-latest, macos-latest]
     runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        shell: bash -l {0}
     steps:
       - uses: actions/checkout@master
 
@@ -109,7 +112,6 @@ jobs:
           mamba-version: "*"
 
       - name: Setup conda
-        shell: bash -l {0}
         run: mamba install conda-build anaconda-client
 
       - name: Build conda package
