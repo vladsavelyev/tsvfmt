@@ -1,4 +1,4 @@
-{% set version = "0.1.15" %}
+{% set version = "0.1.16" %}
 
 package:
   name: tsvfmt
