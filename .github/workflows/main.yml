@@ -117,7 +117,11 @@ jobs:
       - name: Build package
         run: |
           mamba build conda/$(basename $GITHUB_REPOSITORY)
-          mamba install --use-local $(basename $GITHUB_REPOSITORY)
+
+      - name: Build package
+        run: |
+          # --use-local is not working
+          mamba install -c file://${CONDA_PREFIX}/conda-bld/ $(basename $GITHUB_REPOSITORY)
 
       - name: Test
         run: bash -ex test/test.sh
