@@ -10,11 +10,6 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest]
-#        include:
-#          - os: ubuntu-latest
-#            executable_suffix: '_linux'
-#          - os: maxos-latest
-#            executable_suffix: '_macos'
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@master
@@ -26,9 +21,7 @@ jobs:
 
       - name: Install & test
         run: |
-#          mkdir -p ${{ github.workspace }}/bin
           export PATH=${{ github.workspace }}:$PATH
-#          mv tsv ${{ github.workspace }}/bin/tsv_${{ matrix.executable_suffix }}
           bash -ex test/test.sh
 
       # To share the artifact with other jobs
@@ -69,7 +62,7 @@ jobs:
         include:
           - os: ubuntu-latest
             executable_suffix: '_linux'
-          - os: maxos-latest
+          - os: macos-latest
             executable_suffix: '_macos'
     runs-on: ${{ matrix.os }}
     steps:
