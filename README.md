@@ -1,6 +1,6 @@
 # tsvfmt
 
-[![Anaconda-Server Badge](https://anaconda.org/vladsaveliev/tsvfmt/badges/installer/conda.svg)](https://conda.anaconda.org/vladsaveliev/tsvfmt)
+[![Anaconda-Server Badge](https://anaconda.org/vladsaveliev/tsvfmt/badges/installer/conda.svg)](https://anaconda.org/vladsaveliev/tsvfmt)
 [![GitHub Actions Badge](https://github.com/vladsaveliev/tsvfmt/workflows/Release/badge.svg)](https://github.com/vladsaveliev/tsvfmt/actions)
 
 Tab-separated file viewer for command line. Nicely aligns columns in the output.
@@ -8,7 +8,7 @@ Tab-separated file viewer for command line. Nicely aligns columns in the output.
 
 ## Installation
 
-The easiest way is to download the latest binary from the [releases](https://github.com/vladsaveliev/tsvfmt/releases) and make sure to chmod +x the resulting binary.
+The easiest way is to download the latest binary from the [releases](https://github.com/vladsaveliev/tsvfmt/releases) and `chmod +x` the resulting binary.
 
 If you are using go, you can build the binary from source with:
 
@@ -16,7 +16,7 @@ If you are using go, you can build the binary from source with:
 go build tsv.go
 ```
 
-tsvfmt is also available on conda:
+It's also available on conda:
 
 ```
 conda install -c vladsaveliev tsvfmt
@@ -71,4 +71,3 @@ tsv -max 10 test/test.vcf.gz
 chr1     946247  .   G    A,ACGCCGG$  101.77  .       DP=21;AF=$
 chr1    1031232  .   T    C           98.17   .       DP=21;AF=$
 ```
-
