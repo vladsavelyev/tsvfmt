@@ -36,7 +36,7 @@ jobs:
           path: ${{ github.workspace }}/tsv
           if-no-files-found: error
 
-  # Separate job because we don't want a release record for each os
+  # In a separate job w/o matrix because we don't want a release for each OS
   initialize_gh_release:
     # Only creating releases on tag pushes
     if: "startsWith(github.ref, 'refs/tags/')"
@@ -114,11 +114,10 @@ jobs:
       - name: Setup conda
         run: mamba install conda-build anaconda-client
 
-      - name: Build conda package
-        run: mamba build conda/$(basename $GITHUB_REPOSITORY)
-
-      - name: Install
-        run: mamba install --use-local $(basename $GITHUB_REPOSITORY)
+      - name: Build package
+        run: |
+          mamba build conda/$(basename $GITHUB_REPOSITORY)
+          mamba install --use-local $(basename $GITHUB_REPOSITORY)
 
       - name: Test
         run: bash -ex test/test.sh
