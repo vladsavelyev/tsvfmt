@@ -76,7 +76,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ needs.create_gh_release.outputs.upload_url }}
+          upload_url: ${{ needs.initialize_gh_release.outputs.upload_url }}
           asset_path: ./tsv
           asset_name: tsv_${{ matrix.executable_suffix }}
 
