@@ -102,19 +102,12 @@ jobs:
       - name: Add miniconda to PATH
         run: echo "PATH=${HOME}/miniconda/bin:${PATH}" >> $GITHUB_ENV
 
+      - uses: conda-incubator/setup-miniconda@v2
+
       - name: Setup conda
         run: |
-          if [[ "$RUNNER_OS" == "Linux" ]]; then
-              wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh \
-              --no-verbose -O miniconda.sh
-          else
-              wget https://repo.continuum.io/miniconda/Miniconda3-latest-MacOSX-x86_64.sh \
-              --no-verbose -O miniconda.sh
-          fi
-          bash miniconda.sh -b -p ~/miniconda
-          conda config --set always_yes yes --set changeps1 no
           conda config --add channels conda-forge --add channels vladsaveliev
-          conda install conda-build conda-verify anaconda-client go
+          conda install conda-build anaconda-client
 
       - name: Build conda package
         run: conda build conda/$(basename $GITHUB_REPOSITORY)
