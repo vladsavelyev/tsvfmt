@@ -79,6 +79,7 @@ jobs:
           upload_url: ${{ needs.initialize_gh_release.outputs.upload_url }}
           asset_path: ./tsv
           asset_name: tsv_${{ matrix.executable_suffix }}
+          asset_content_type: application/octet-stream
 
   conda:
     if: "startsWith(github.ref, 'refs/tags/')"
