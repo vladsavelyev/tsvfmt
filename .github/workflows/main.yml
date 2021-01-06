@@ -2,39 +2,14 @@ name: CI
 on: [push, pull_request]
 
 jobs:
-  # Separate job because we don't want a release record for each os
-  create_gh_release:
-    # Only creating releases on tag pushes
-    if: "startsWith(github.ref, 'refs/tags/')"
-    name: Init GitHub release
-    runs-on: ubuntu-latest
-    outputs:
-      upload_url: ${{ steps.create_release.outputs.upload_url }}
-    steps:
-      - name: Create release
-        id: create_gh_release
-        uses: actions/create-release@v1
-        env:
-          # This token is provided by Actions, you do not need to create your own token
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
-
-  build_test_publish:
+  build_and_test:
     # For tag pushes, we want to assure only the tag event triggers CI, not the accompanying commit:
     if: "! startsWith(github.event.head_commit.message, 'Bump ') || startsWith(github.ref, 'refs/tags/')"
-    name: Build, run tests and publish assets
-    needs: create_gh_release
+    name: Build and run tests
     strategy:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest]
-        include:
-          - os: ubuntu-latest
-            executable_suffix: 'linux'
-          - os: maxos-latest
-            executable_suffix: 'macos'
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@master
@@ -49,6 +24,52 @@ jobs:
           export PATH=$PWD:$PATH
           bash -ex test/test.sh
 
+      # To share the artifact with other jobs
+      - uses: actions/upload-artifact@master
+        with:
+          name: binary
+          path: ./tsv
+
+  # Separate job because we don't want a release record for each os
+  initialize_gh_release:
+    # Only creating releases on tag pushes
+    if: "startsWith(github.ref, 'refs/tags/')"
+    name: Initialize GitHub release
+    needs: build_and_test
+    runs-on: ubuntu-latest
+    outputs:
+      upload_url: ${{ steps.create_release.outputs.upload_url }}
+    steps:
+      - name: Create release
+        id: create_gh_release
+        uses: actions/create-release@v1
+        env:
+          # This token is provided by Actions, you do not need to create your own token
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+
+  upload_gh_assets:
+    if: "startsWith(github.ref, 'refs/tags/')"
+    name: Publish GitHub release assets
+    needs: initialize_gh_release
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+        include:
+          - os: ubuntu-latest
+            executable_suffix: '_linux'
+          - os: maxos-latest
+            executable_suffix: '_macos'
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/download-artifact@master
+        with:
+          name: binary
+          path: ./tsv
+
       - name: Upload release asset
         id: upload-release-asset
         uses: actions/upload-release-asset@v1
@@ -62,7 +83,7 @@ jobs:
   conda:
     if: "startsWith(github.ref, 'refs/tags/')"
     name: Build and publish a conda package
-    needs: build_test_publish
+    needs: build_and_test
     strategy:
       fail-fast: false
       matrix:
@@ -93,8 +114,7 @@ jobs:
         run: conda install --use-local $(basename $GITHUB_REPOSITORY)
 
       - name: Test
-        run: |
-          bash -ex test/test.sh
+        run: bash -ex test/test.sh
 
       - name: Upload to anaconda
         run: |
