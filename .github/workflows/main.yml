@@ -32,7 +32,7 @@ jobs:
       # To share the artifact with other jobs
       - uses: actions/upload-artifact@master
         with:
-          name: asset_${{ matrix.executable_suffix }}
+          name: tsv_${{ matrix.executable_suffix }}
           path: ${{ github.workspace }}/tsv
           if-no-files-found: error
 
@@ -73,7 +73,7 @@ jobs:
     steps:
       - uses: actions/download-artifact@master
         with:
-          name: asset_${{ matrix.executable_suffix }}
+          name: tsv_${{ matrix.executable_suffix }}
           path: ~/tsv_${{ matrix.executable_suffix }}
 
       - name: Upload release asset
@@ -83,7 +83,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ needs.initialize_gh_release.outputs.upload_url }}
-          asset_path: ~/tsv_${{ matrix.executable_suffix }}
+          asset_path: $HOME/tsv_${{ matrix.executable_suffix }}
           asset_name: tsv_${{ matrix.executable_suffix }}
           asset_content_type: application/octet-stream
 
