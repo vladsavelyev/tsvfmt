@@ -1,5 +1,24 @@
 # tsvfmt
+
 Tab-separated file viewer for command line. Nicely aligns colums in the output.
+
+
+## Installation
+
+The easiest way is to download the latest binary from the [releases](https://github.com/vladsaveliev/tsvfmt/releases) and make sure to chmod +x the resulting binary.
+
+If you are using go, you can build the binary from source with:
+
+```
+go build tsv.go
+
+```
+
+tsvfmt is also available on conda:
+
+```
+conda install -c vladsaveliev tsvfmt
+``` 
 
 ## Usage
 

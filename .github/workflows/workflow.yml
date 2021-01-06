@@ -2,18 +2,73 @@ name: CI
 on: [push, pull_request]
 
 jobs:
-  build-test-publish:
-    # For tag pushes, we want to assure only the tag event triggers CI,
-    # not the accompanying commit:
+  # Separate job because we don't want a release record for each os
+  create_gh_release:
+    # Only creating releases on tag pushes
+    if: "startsWith(github.ref, 'refs/tags/')"
+    name: Init GitHub release
+    runs-on: ubuntu-latest
+    outputs:
+      upload_url: ${{ steps.create_release.outputs.upload_url }}
+    steps:
+      - name: Create release
+        id: create_gh_release
+        uses: actions/create-release@v1
+        env:
+          # This token is provided by Actions, you do not need to create your own token
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+
+  build_test_publish:
+    # For tag pushes, we want to assure only the tag event triggers CI, not the accompanying commit:
     if: "! startsWith(github.event.head_commit.message, 'Bump ') || startsWith(github.ref, 'refs/tags/')"
-    runs-on: ${{ matrix.os }}
+    name: Build, run tests and publish assets
+    needs: create_gh_release
     strategy:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest]
+        include:
+          - os: ubuntu-latest
+            executable_suffix: 'linux'
+          - os: maxos-latest
+            executable_suffix: 'macos'
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@master
 
+      - uses: actions/setup-go@v2
+
+      - name: Compile
+        run: go build tsv.go
+
+      - name: Install & test
+        run: |
+          export PATH=$PWD:$PATH
+          bash -ex test/test.sh
+
+      - name: Upload release asset
+        id: upload-release-asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.create_gh_release.outputs.upload_url }}
+          asset_path: ./tsv
+          asset_name: tsv_${{ matrix.executable_suffix }}
+
+  conda:
+    if: "startsWith(github.ref, 'refs/tags/')"
+    name: Build and publish a conda package
+    needs: build_test_publish
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
       - name: Add miniconda to PATH
         run: echo "PATH=${HOME}/miniconda/bin:${PATH}" >> $GITHUB_ENV
 
@@ -31,7 +86,7 @@ jobs:
           conda config --add channels conda-forge --add channels vladsaveliev
           conda install conda-build conda-verify anaconda-client go
 
-      - name: Build package
+      - name: Build conda package
         run: conda build conda/$(basename $GITHUB_REPOSITORY)
 
       - name: Install
@@ -40,9 +95,8 @@ jobs:
       - name: Test
         run: |
           bash -ex test/test.sh
-          
+
       - name: Upload to anaconda
-        if: "startsWith(github.ref, 'refs/tags/')"
         run: |
           anaconda -t ${{ secrets.ANACONDA_TOKEN }} \
             upload ${HOME}/miniconda/conda-bld/**/*.tar.bz2
