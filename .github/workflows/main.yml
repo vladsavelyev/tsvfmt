@@ -83,7 +83,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ needs.initialize_gh_release.outputs.upload_url }}
-          asset_path: $HOME/tsv_${{ matrix.executable_suffix }}
+          asset_path: /home/runner/tsv_${{ matrix.executable_suffix }}
           asset_name: tsv_${{ matrix.executable_suffix }}
           asset_content_type: application/octet-stream
 
