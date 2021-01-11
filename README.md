@@ -58,13 +58,13 @@ tsv -d '|' test/pipe_del_file.txt
 Scan up to 1000 lines to determine column widths. Default is 100
 
 ```
-tsv test/test.csv -l 1000
+tsv test/test.csv -buffer 1000
 ```
 
 Set the maximum width of a column to 20 characters. If a column is wider, it will be cropped
 
 ```
-tsv -max 10 test/test.vcf.gz
+tsv -colwidth 10 test/test.vcf.gz
 
 ##fileformat=VCFv4.2
 #CHROM      POS  ID  REF  ALT         QUAL    FILTER  INFO

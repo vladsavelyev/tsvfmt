@@ -13,11 +13,11 @@ import (
 )
 
 func main() {
-	delimPtr := flag.String("d", "", "column delimiter. If not specified, " +
+	delimPtr := flag.String("d", "", "column delimiter. If not specified, "+
 		"a comma will be used for files with extension .csv, a tab otherwise")
-	maxPreviewLinesPtr := flag.Int("l", 100, "The number of lines " +
-		"to read in to estimate the size of a column [default: 100]" )
-	maxColWidthPtr := flag.Int("max", 200, "Maximum width of a column. " +
+	maxBufferLinesPtr := flag.Int("buffer", 100, "The number of lines "+
+		"to read in to estimate the size of a column [default: 100]")
+	maxColWidthPtr := flag.Int("colwidth", 200, "Maximum width of a column. "+
 		"Default: 200. Set to 0 to make unlimited.")
 	flag.Parse()
 	args := flag.Args()
@@ -37,7 +37,7 @@ func main() {
 	r, f := readGzFile(fPath)
 	defer f.Close()
 	scanner := bufio.NewScanner(r)
-	tabView(scanner, *delimPtr, *maxPreviewLinesPtr, *maxColWidthPtr)
+	tabView(scanner, *delimPtr, *maxBufferLinesPtr, *maxColWidthPtr)
 	if err := scanner.Err(); err != nil {
 		log.Fatal(err)
 	}
@@ -136,7 +136,7 @@ func writeCols(line string, colWidths []int, colTypes []string, delim string) {
 		if len(entry) > colWidths[colIdx] {
 			// if too big, show as much as possible, and indicate the
 			// truncation with '$'
-			entry = fmt.Sprintf("%s$", entry[0:colWidths[colIdx] - 1])
+			entry = fmt.Sprintf("%s$", entry[0:colWidths[colIdx]-1])
 		} else if colTypes[colIdx] == "int" {
 			// numbers are right-justified
 			entryInt, err := strconv.Atoi(entry)
@@ -150,8 +150,8 @@ func writeCols(line string, colWidths []int, colTypes []string, delim string) {
 			entry = fmt.Sprintf("%-*s", colWidths[colIdx], entry)
 		}
 		fmt.Print(entry)
-		if colIdx < len(entries) - 1 {
-			fmt.Print("  ")  // separating with 2 spaces
+		if colIdx < len(entries)-1 {
+			fmt.Print("  ") // separating with 2 spaces
 		}
 	}
 	fmt.Print("\n")
